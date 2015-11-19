@@ -138,7 +138,7 @@ public class Chunk {
                     ResourceLoader.getResourceAsStream("terrain.png"));
         }
         catch(Exception e){
-            System.out.print("ER-ROAR!");
+            System.out.print("ER-ROAR!\n");
         }
         r= new Random();
         Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
@@ -153,7 +153,7 @@ public class Chunk {
                         Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
                     }else{
                         Blocks[x][y][z] = new
-                        Block(Block.BlockType.BlockType_Default); //change to Bedrock?
+                        Block(Block.BlockType.BlockType_Bedrock); //change to Bedrock?
                     }
                 }
             } 

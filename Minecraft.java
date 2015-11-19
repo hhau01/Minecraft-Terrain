@@ -22,10 +22,12 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.Sys;
 import org.lwjgl.util.glu.GLU;
 import static org.lwjgl.opengl.GL11.*;
+import org.newdawn.slick.opengl.TextureImpl;
+import org.newdawn.slick.util.ResourceLoader;
 
 public class Minecraft{
-        private Camera fp = new Camera(0f,0f,0f);
         private DisplayMode displayMode;
+        private Camera fp = new Camera(0f,0f,0f);
         
         /*
          * The next three methods are from the notes.
@@ -62,21 +64,22 @@ public class Minecraft{
         }
         
         private void initGL(){
-            glClearColor(0.0f,0.0f,0.0f,0.0f);
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             
             GLU.gluPerspective(100.0f, (float)displayMode.getWidth()/(float)displayMode.getHeight(), 0.1f, 300.0f);
             
             glMatrixMode(GL_MODELVIEW);
-            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+            glEnable(GL_TEXTURE_2D);
+            glClearColor(0.0f,0.0f,0.0f,0.0f);
             
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glEnableClientState(GL_VERTEX_ARRAY);
             glEnableClientState(GL_COLOR_ARRAY);
             glEnable(GL_DEPTH_TEST);
             
-            glEnable(GL_TEXTURE_2D);
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
         }
         
     public static void main(String[] args){
