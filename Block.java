@@ -1,14 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* file: Block.java
+* author: Henry Au, Leon Yen, Marco Hernandez
+* class: CS 445 – Computer Graphics
+*
+* assignment: Checkpoint 2
+* date last modified: 11/19/2015
+*
+* purpose: Holds Block class information
+*/
 package minecraft;
 
-/**
- *
- * @author Leon
- */
 public class Block {
     private boolean IsActive;
     private BlockType Type;
@@ -27,27 +28,36 @@ public class Block {
         BlockType(int i) {
             BlockID = i;
         }
-    
+        
+        public int GetID() {
+            return BlockID;
+        }
+        
+        public void SetID(int i) {
+            BlockID = i;
+        }
     }
     
-    public Block(BlockType type)
-    {
+    public Block(BlockType type){
         Type = type;
+    }
+    
+    public void setCoords(float x, float y, float z){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    
+    public boolean IsActive() {
+        return IsActive;
     }
     
     public void SetActive(boolean active) {
         IsActive = active;
     }
-        
-    public boolean IsActive() {
-        return IsActive;
-    }
     
-    public int GetID() {
-        return Type.BlockID;
+    public int GetID(){
+        return Type.GetID();
     }
 
-    public void SetID(int i) {
-        Type.BlockID = i;
-    }
 }
