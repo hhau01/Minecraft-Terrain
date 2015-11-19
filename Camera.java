@@ -2,14 +2,14 @@
 * author: Henry Au, Leon Yen, Marco Hernandez
 * class: CS 445 – Computer Graphics
 *
-* assignment: Checkpoint 2
-* date last modified: 11/19/2015
+* assignment: Checkpoint 1
+* date last modified: 11/04/2015
 *
 * purpose: Stores camera position data and performs transformations
-* as if looking through camera. Render() creates a 3D cube (checkpoint 1)
+* as if looking through camera. Render() creates a 3D cube
 */
 
-package minecraft;
+package Minecraft;
 
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -26,13 +26,17 @@ public class Camera {
         private float pitch = 0.0f;
         private Vector3f me;
         
+        public Chunk chunk;
+        
+        
         //Camera constructor
-        public Camera(float x, float y, float z){
+        public Camera(float x, float y, float z){ // do coor need to be float if we will always define the world by the cube units
             position = new Vector3f(x,y,z);
-            IPosition = new Vector3f(x,y,z);
+            chunk = new Chunk((int) x, (int) y, (int) z);
+           /* IPosition = new Vector3f(x,y,z); ONLY FOR CHECKPOINT 1
             IPosition.x = 0f;
             IPosition.y = 15f;
-            IPosition.z = 0f;
+            IPosition.z = 0f; */
         }
         
         public void yaw(float amount){
@@ -137,8 +141,7 @@ public class Camera {
                 camera.lookThrough();
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 
-                
-                render();
+                chunk.render();
                 
                 Display.update();
                 Display.sync(60);
@@ -147,108 +150,5 @@ public class Camera {
             Display.destroy();
         }
         
-        /*
-        //Render simple 3D cube w/ six different colors
-        private void render(){
-            try{
-                glBegin(GL_QUADS);
-                    //Top
-                    glColor3f(0.0f,0.0f,1.0f); //Color
-                    glVertex3f(1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(1.0f,1.0f,1.0f);
-
-                    //Bottom
-                    glColor3f(0.0f,1.0f,0.0f); //Color
-                    glVertex3f(1.0f,-1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-
-                    //Front
-                    glColor3f(1.0f,0.0f,1.0f); //Color
-                    glVertex3f(1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,1.0f);
-
-                    //Back
-                    glColor3f(1.0f,0.0f,0.0f); //Color
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(1.0f,1.0f,-1.0f);
-
-                    //Left
-                    glColor3f(1.0f,1.0f,0.0f); //Color
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-
-                    //Right
-                    glColor3f(0.0f,1.0f,1.0f); //Color
-                    glVertex3f(1.0f,1.0f,-1.0f);
-                    glVertex3f(1.0f,1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Top
-                    glColor3f(0.0f,0.0f,0.0f); //Color
-                    glVertex3f(1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(1.0f,1.0f,1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Bottom
-                    glVertex3f(1.0f,-1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Front
-                    glVertex3f(1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Back
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(1.0f,1.0f,-1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Left
-                    glVertex3f(-1.0f,1.0f,1.0f);
-                    glVertex3f(-1.0f,1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,-1.0f);
-                    glVertex3f(-1.0f,-1.0f,1.0f);
-                glEnd();
-                
-                glBegin(GL_LINE_LOOP);
-                    //Right
-                    glVertex3f(1.0f,1.0f,-1.0f);
-                    glVertex3f(1.0f,1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,1.0f);
-                    glVertex3f(1.0f,-1.0f,-1.0f);
-                glEnd();
-                
-            }
-            catch(Exception e){
-            
-            }
-        }
-        */
 }
 
