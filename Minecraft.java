@@ -38,7 +38,7 @@ public class Minecraft{
             try{
                 createWindow();
                 initGL();
-                gameLoop();
+                gameLoop(); 
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -82,8 +82,9 @@ public class Minecraft{
 
         }
         
+        //moved gameLoop from Camera because OpenGL Context error
         public void gameLoop() {
-            Camera camera = new Camera(0, 0, 0);
+            Camera camera = new Camera(-35.0f, -35.0f, -35.0f);
             float dx = 0.0f;
             float dy = 0.0f;
             float dt = 0.0f;

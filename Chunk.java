@@ -7,8 +7,6 @@
 * date last modified: 11/19/2015
 *
 * purpose: Holds information of the chunks which are just multiple blocks
-* Modeled heightMap after:
-* https://sites.google.com/site/letsmakeavoxelengine/home/landcape-creation
 */
 
 package minecraft;
@@ -25,8 +23,7 @@ import org.newdawn.slick.util.ResourceLoader;
 public class Chunk {
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
-    static int heightMap[][] = new int[CHUNK_SIZE][CHUNK_SIZE];
-    final int MIN_HEIGHT = 0;
+    final int MIN_HEIGHT = 10;
     private Block [][][] Blocks;
     private int VBOVertexHandle;
     private int VBOColorHandle;
@@ -35,22 +32,44 @@ public class Chunk {
     private Random r;
     private Texture texture;
     
-    public void render() {
-        glPushMatrix();
-            glPushMatrix();
-            glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
-            glVertexPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
-            glColorPointer(3, GL_FLOAT, 0, 0L);
-            glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
-            glBindTexture(GL_TEXTURE_2D, 1);
-            glTexCoordPointer(2, GL_FLOAT, 0, 0L);
-            glDrawArrays(GL_QUADS, 0 , CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 24);
-        glPopMatrix();
+    public Chunk(int startX, int startY, int startZ) {
+        try{
+            texture = TextureLoader.getTexture("PNG", 
+                    ResourceLoader.getResourceAsStream("terrain.png"));
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        r= new Random();
+        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+           for (int y = 0; y < CHUNK_SIZE; y++) {
+               for (int z = 0; z < CHUNK_SIZE; z++) {
+                   if(r.nextFloat() > 0.7f){
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
+                    }else if(r.nextFloat() > 0.4f){
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
+                    }else if(r.nextFloat() > 0.2f){
+                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
+                    }else{
+                        Blocks[x][y][z] = new
+                        Block(Block.BlockType.BlockType_Bedrock); //change to Bedrock?
+                    }
+                }
+            } 
+        }
+        VBOColorHandle = glGenBuffers();
+        VBOVertexHandle = glGenBuffers();
+        VBOTextureHandle = glGenBuffers();
+        StartX = startX;
+        StartY = startY;
+        StartZ = startZ;
+        rebuildMesh(startX, startY, startZ);
     }
     
     public void rebuildMesh(float startX, float startY, float startZ) {
-        SimplexNoise noise = new SimplexNoise(30, 0.04, r.nextInt());
+        SimplexNoise noise = new SimplexNoise(30, 0.2, r.nextInt());
         int height;
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
@@ -63,8 +82,7 @@ public class Chunk {
                 height = (StartY + (int)(100*noise.getNoise((int)x, (int)z))*CUBE_LENGTH);
                 height += MIN_HEIGHT;
                 height %= CHUNK_SIZE;
-                heightMap[(int)x][(int)z] = height;
-                for(float y = 0; y < CHUNK_SIZE; y++){
+                for(float y = 0; y <= 10; y++){
                     VertexPositionData.put(createCube((float)(startX + x*CUBE_LENGTH), 
                             (float)(y*CUBE_LENGTH + (int)(CHUNK_SIZE*.8)), 
                             (float)(startZ + z*CUBE_LENGTH)));
@@ -86,6 +104,20 @@ public class Chunk {
         glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
         glBufferData(GL_ARRAY_BUFFER, VertexTextureData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+    
+    public void render() {
+        glPushMatrix();
+            glPushMatrix();
+            glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
+            glVertexPointer(3, GL_FLOAT, 0, 0L);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
+            glColorPointer(3, GL_FLOAT, 0, 0L);
+            glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
+            glBindTexture(GL_TEXTURE_2D, 1);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0L);
+            glDrawArrays(GL_QUADS, 0 , CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE * 24);
+        glPopMatrix();
     }
     
     private float[] createCubeVertexCol(float[] CubeColorArray) {
@@ -143,41 +175,6 @@ public class Chunk {
         }
         CHECKPOINT 1 */ 
         return new float[] { 1, 1, 1 };
-    }
-    
-    public Chunk(int startX, int startY, int startZ) {
-        try{
-            texture = TextureLoader.getTexture("PNG", 
-                    ResourceLoader.getResourceAsStream("terrain.png"));
-        }
-        catch(Exception e){
-            System.out.print("ER-ROAR!\n");
-        }
-        r= new Random();
-        Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-           for (int y = 0; y < CHUNK_SIZE; y++) {
-               for (int z = 0; z < CHUNK_SIZE; z++) {
-                   if(r.nextFloat() > 0.7f){
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Grass);
-                    }else if(r.nextFloat() > 0.4f){
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Dirt);
-                    }else if(r.nextFloat() > 0.2f){
-                        Blocks[x][y][z] = new Block(Block.BlockType.BlockType_Water);
-                    }else{
-                        Blocks[x][y][z] = new
-                        Block(Block.BlockType.BlockType_Bedrock); //change to Bedrock?
-                    }
-                }
-            } 
-        }
-        VBOColorHandle = glGenBuffers();
-        VBOVertexHandle = glGenBuffers();
-        VBOTextureHandle = glGenBuffers();
-        StartX = startX;
-        StartY = startY;
-        StartZ = startZ;
-        rebuildMesh(startX, startY, startZ);
     }
     
     public static float[] createTexCube(float x, float y, Block block){
