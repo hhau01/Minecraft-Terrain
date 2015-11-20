@@ -7,6 +7,8 @@
 * date last modified: 11/19/2015
 *
 * purpose: Holds information of the chunks which are just multiple blocks
+* Modeled heightMap after:
+* https://sites.google.com/site/letsmakeavoxelengine/home/landcape-creation
 */
 
 package minecraft;
@@ -23,12 +25,14 @@ import org.newdawn.slick.util.ResourceLoader;
 public class Chunk {
     static final int CHUNK_SIZE = 30;
     static final int CUBE_LENGTH = 2;
+    static int heightMap[][] = new int[CHUNK_SIZE][CHUNK_SIZE];
+    final int MIN_HEIGHT = 0;
     private Block [][][] Blocks;
     private int VBOVertexHandle;
     private int VBOColorHandle;
+    private int VBOTextureHandle;
     private int StartX, StartY, StartZ;
     private Random r;
-    private int VBOTextureHandle;
     private Texture texture;
     
     public void render() {
@@ -46,16 +50,25 @@ public class Chunk {
     }
     
     public void rebuildMesh(float startX, float startY, float startZ) {
+        SimplexNoise noise = new SimplexNoise(30, 0.20, r.nextInt());
+        int height;
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
         FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
         FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer((CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE)*6*12);
-        for (float x = 0; x < CHUNK_SIZE; x += 1) {
-            for (float z = 0; z < CHUNK_SIZE; z += 1) {
+        for (float x = 0; x < CHUNK_SIZE; x++) {
+            for (float z = 0; z < CHUNK_SIZE; z++) {
+                height = (StartY + (int)(100*noise.getNoise((int)x, (int)z))*CUBE_LENGTH);
+                height += MIN_HEIGHT;
+                height %= CHUNK_SIZE;
+                heightMap[(int)x][(int)z] = height;
                 for(float y = 0; y < CHUNK_SIZE; y++){
-                    VertexPositionData.put(createCube((float) (startX + x * CUBE_LENGTH), (float)(y*CUBE_LENGTH + (int)(CHUNK_SIZE * .8)), (float) (startZ + z * CUBE_LENGTH)));
+                    VertexPositionData.put(createCube((float)(startX + x*CUBE_LENGTH), 
+                            (float)(y*CUBE_LENGTH + (int)(CHUNK_SIZE*.8)), 
+                            (float)(startZ + z*CUBE_LENGTH)));
+
                     VertexColorData.put(createCubeVertexCol(getCubeColor(Blocks[(int)x][(int)y][(int)z])));  
                     VertexTextureData.put(createTexCube((float)0, (float)0, Blocks[(int)(x)][(int)(y)][(int)(z)]));
                 }
