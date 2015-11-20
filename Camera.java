@@ -87,68 +87,7 @@ public class Camera {
             glTranslatef(position.x, position.y, position.z);
         }
         
-        public void gameLoop() {
-            Camera camera = new Camera(0, 0, 0);
-            float dx = 0.0f;
-            float dy = 0.0f;
-            float dt = 0.0f;
-            float lastTime = 0.0f;
-            long time = 0;
-            float mouseSensitivity = 0.09f;
-            float movementSpeed = 0.35f;
-            Mouse.setGrabbed(true);
-            
-            while (!Display.isCloseRequested() && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
-                time = Sys.getTime();
-                lastTime = time;
-                
-                dx = Mouse.getDX();
-                dy = Mouse.getDY();
-                camera.yaw(dx * mouseSensitivity);
-                camera.pitch(dy * mouseSensitivity);
-                
-                //Move forward
-                if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-                    camera.walkForward(movementSpeed);
-                }
-                
-                //Move backwards
-                if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-                    camera.walkBackwards(movementSpeed);
-                }
-                
-                //Strafe left
-                if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-                    camera.strafeLeft(movementSpeed);
-                }
-                
-                //Strafe right
-                if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-                    camera.strafeRight(movementSpeed);
-                }
-                
-                //Move up
-                if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
-                    camera.moveUp(movementSpeed);
-                }
-                
-                //Move down
-                if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
-                    camera.moveDown(movementSpeed);
-                }
-                
-                glLoadIdentity();
-                camera.lookThrough();
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                
-                chunk.render();
-                
-                Display.update();
-                Display.sync(60);
-            }
-
-            Display.destroy();
-        }
+        
         
 }
 

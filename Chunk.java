@@ -50,7 +50,7 @@ public class Chunk {
     }
     
     public void rebuildMesh(float startX, float startY, float startZ) {
-        SimplexNoise noise = new SimplexNoise(30, 0.20, r.nextInt());
+        SimplexNoise noise = new SimplexNoise(30, 0.04, r.nextInt());
         int height;
         VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
