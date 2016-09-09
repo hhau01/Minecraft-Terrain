@@ -1,10 +1,10 @@
 /*
 * file: Block.java
-* author: Henry Au, Leon Yen, Marco Hernandez
+* author: Henry Au, Leon Yen
 * class: CS 445 – Computer Graphics
 *
-* assignment: Checkpoint 2
-* date last modified: 11/19/2015
+* assignment: Final Checkpoint
+* date last modified: 11/23/2015
 *
 * purpose: Holds Block class information
 */
